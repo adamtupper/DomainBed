@@ -1,23 +1,20 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 
-from collections import defaultdict
-from torchvision.datasets import MNIST
-import xml.etree.ElementTree as ET
-from zipfile import ZipFile
 import argparse
-import tarfile
-import shutil
-import gdown
-import uuid
 import json
 import os
+import shutil
+import tarfile
 import urllib
+from collections import defaultdict
+from zipfile import ZipFile
 
+import gdown
+from torchvision.datasets import MNIST
 from wilds.datasets.camelyon17_dataset import Camelyon17Dataset
-from wilds.datasets.fmow_dataset import FMoWDataset
-
 
 # utils #######################################################################
+
 
 def stage_path(data_dir, name):
     full_path = os.path.join(data_dir, name)
@@ -176,11 +173,9 @@ def download_terra_incognita(data_dir):
         "https://storage.googleapis.com/public-datasets-lila/caltechcameratraps/eccv_18_all_images_sm.tar.gz",
         os.path.join(full_path, "terra_incognita_images.tar.gz"))
 
-
     download_and_extract(
         "https://storage.googleapis.com/public-datasets-lila/caltechcameratraps/eccv_18_annotations.tar.gz",
         os.path.join(full_path, "eccv_18_annotations.tar.gz"))
-
 
     include_locations = ["38", "46", "100", "43"]
 
@@ -190,13 +185,19 @@ def download_terra_incognita(data_dir):
     ]
 
     images_folder = os.path.join(full_path, "eccv_18_all_images_sm/")
-    annotations_folder = os.path.join(full_path,"eccv_18_annotation_files/")
-    cis_test_annotations_file = os.path.join(full_path, "eccv_18_annotation_files/cis_test_annotations.json")
-    cis_val_annotations_file =   os.path.join(full_path, "eccv_18_annotation_files/cis_val_annotations.json")
-    train_annotations_file =   os.path.join(full_path, "eccv_18_annotation_files/train_annotations.json")
-    trans_test_annotations_file =   os.path.join(full_path, "eccv_18_annotation_files/trans_test_annotations.json")
-    trans_val_annotations_file =   os.path.join(full_path, "eccv_18_annotation_files/trans_val_annotations.json")
-    annotations_file_list = [cis_test_annotations_file, cis_val_annotations_file, train_annotations_file, trans_test_annotations_file, trans_val_annotations_file]
+    annotations_folder = os.path.join(full_path, "eccv_18_annotation_files/")
+    cis_test_annotations_file = os.path.join(
+        full_path, "eccv_18_annotation_files/cis_test_annotations.json")
+    cis_val_annotations_file = os.path.join(
+        full_path, "eccv_18_annotation_files/cis_val_annotations.json")
+    train_annotations_file = os.path.join(
+        full_path, "eccv_18_annotation_files/train_annotations.json")
+    trans_test_annotations_file = os.path.join(
+        full_path, "eccv_18_annotation_files/trans_test_annotations.json")
+    trans_val_annotations_file = os.path.join(
+        full_path, "eccv_18_annotation_files/trans_val_annotations.json")
+    annotations_file_list = [cis_test_annotations_file, cis_val_annotations_file,
+                             train_annotations_file, trans_test_annotations_file, trans_val_annotations_file]
     destination_folder = full_path
 
     stats = {}
@@ -211,8 +212,6 @@ def download_terra_incognita(data_dir):
             annots = json.load(f)
             for k, v in annots.items():
                 data[k].extend(v)
-
-
 
     category_dict = {}
     for item in data['categories']:
@@ -262,7 +261,6 @@ def download_terra_incognita(data_dir):
     shutil.rmtree(annotations_folder)
 
 
-
 # SVIRO #################################################################
 
 def download_sviro(data_dir):
@@ -280,7 +278,8 @@ def download_sviro(data_dir):
 
 def download_spawrious(data_dir, remove=True):
     dst = os.path.join(data_dir, "spawrious.tar.gz")
-    urllib.request.urlretrieve('https://www.dropbox.com/s/e40j553480h3f3s/spawrious224.tar.gz?dl=1', dst)
+    urllib.request.urlretrieve(
+        'https://www.dropbox.com/s/e40j553480h3f3s/spawrious224.tar.gz?dl=1', dst)
     tar = tarfile.open(dst, "r:gz")
     tar.extractall(os.path.dirname(dst))
     tar.close()
@@ -301,5 +300,5 @@ if __name__ == "__main__":
     download_terra_incognita(args.data_dir)
     # download_spawrious(args.data_dir)
     # download_sviro(args.data_dir)
-    # Camelyon17Dataset(root_dir=args.data_dir, download=True)
+    Camelyon17Dataset(root_dir=args.data_dir, download=True)
     # FMoWDataset(root_dir=args.data_dir, download=True)
